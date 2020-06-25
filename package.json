@@ -1,0 +1,14 @@
+{
+  "name": "zoominfo-products-catalog",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "install": "cd app && npm install && cd ../server && npm install",
+    "start-server": "cd server && npm start",
+    "start-app": "cd app && npm start",
+    "start-android": "cd app && npm run android",
+    "start-ios": "cd app && npm run ios"
+  },
+  "author": "Nir Adar",
+  "license": "ISC"
+}
