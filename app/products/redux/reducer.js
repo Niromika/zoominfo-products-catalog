@@ -1,32 +1,34 @@
 import * as actions from './actions';
-// import {search} from '../../server/routes/products';
 
 const initialState = {
   data: [],
   hasMore: null,
-  totalCount: null,
   loading: false,
 };
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actions.FETCH_PRODUCTS_START:
-    case actions.FETCH_PRODUCT_START:
       return Object.assign({}, state, {
         loading: true,
       });
-    case actions.FETCH_PRODUCTS_SUCCESS: {
+    case actions.SEARCH_PRODUCTS_START:
+      return Object.assign({}, state, {
+        loading: true,
+        data: []
+      });
+    case actions.SEARCH_PRODUCTS_SUCCESS:
+    case actions.FETCH_PRODUCTS_SUCCESS: 
       const {payload} = action;
+      debugger;
       return Object.assign({}, state, {
         loading: false,
         hasMore: payload.hasMore,
-        data: payload.data,
-        totalCount: payload.totalCount,
+        data: [...state.data, ...payload.data],
       });
-    }
     default:
       return state;
   }
 }
 
-// export default reducer;
+export default reducer;

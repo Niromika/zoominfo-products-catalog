@@ -1,74 +1,106 @@
-import { useEffect } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar } from 'react-native';
-import { connect } from 'react-redux';
-import { fetchProduts, fetchProduct } from './redux/actions';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, Image, VirtualizedList, TouchableOpacity, Text, View, TextInput } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts, search } from './redux/actions';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { BASE_API } from '../config';
 
 const styles = StyleSheet.create({
-
+	searchInput: {
+		backgroundColor: '#f5f5f5',
+    borderWidth: 1,
+    borderColor: '#777',
+    borderRadius: 15,
+		margin: 20,
+		marginBottom: 5,
+		padding: 10,
+		fontSize: 20
+	},
+	productContainer: {
+		alignItems: 'center'
+	},
+  product: {
+    width: '100%',
+		padding: 15,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'black',
+		borderStyle: 'solid',
+		borderRadius: 20,
+    alignItems: 'center'
+	},
+	productDetails: {
+		fontSize: 25,
+		color: '#333',
+		fontWeight: 'bold'
+	},
+  productImage: {
+		margin: 15,
+    width: '100%',
+		height: 150,
+		borderRadius: 5
+  },
+  loadingSpinner: {
+    color: '#fff'
+  }
 });
 
-const ProductsList = props => {
-    const {hasMore, data, loading, totalCount} = props; // comming from mapStateToProsps
-  // const [products, setProducts] = useState([]);
+const ProductsList = ({ navigation }) => {
 
+  const [page, setPage] = useState(1)
+  const dispatch = useDispatch();
+  const data = useSelector(state => state.data);
+  const shouldFetchMoreProducts = useSelector(state => state.hasMore);
+  const isLoading = useSelector(state => state.loading);
   useEffect(() => {
-    // replace with redux action instead
-    fetchProduct();
-
-    // using internal state
-    // const fetchData = async () => {
-    //   const res = await fetch(`${BASE_API}/products/`);
-    //   const body = await res.json();
-    //   setProducts(body.data);
-    // };
-    //
-    // fetchData();
-  }, []);
+    dispatch(fetchProducts(page));
+  }, [page]);
+  debugger;
+  console.log('data: ', data, shouldFetchMoreProducts);
 
   return (
-    <SafeAreaView style={{height: '100%'}}>
+    <SafeAreaView styles={{backgroundColor: '#000'}}>
+       <TextInput
+        style={styles.searchInput}
+        placeholder='Search product...'
+        onChangeText={ text => {
+          dispatch(search(text));
+        }
+        }
+      />
       <VirtualizedList
         data={data}
         initialNumToRender={10}
-        renderItem={({item, index}) => (
+        renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={async () => {
-              const product = await fetchProduct(item.id);
-              navigation.navigate('Product', {
-                id: item.id,
-              });
-            }}
+            onPress={() => { navigation.navigate('ProductPage', { item }) }}
             activeOpacity={0.75}
-            style={{flex: 1}}
-            key={item.id}>
-            <Text>{item.description}</Text>
+            style={styles.productContainer}
+            key={item.id} >
+            <View style={styles.product}>
+              <Text style={styles.productDetails}>{item.title}</Text>
+              <Image style={styles.productImage} source={{uri: `${BASE_API}/images/${item.filename}`}}/>
+							<Text style={styles.productDetails}>{`$ ${item.price}`}</Text>
+            </View>
           </TouchableOpacity>
         )}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index.toString()}
         getItemCount={data => data.length}
         getItem={(data, index) => data[index]}
+        onEndReachedThreshold={0.1}
         onEndReached={() => {
-          // stop fetching data if there is nothing left
-        //   if (hasMore) {
-        //     fetchProducts();
-        //   }
-        }}
-      />
-      {/* {loading && <Loading />} */}
+            if(shouldFetchMoreProducts) {
+                setPage(page + 1)
+            }
+          }
+        }
+    />
+    <Spinner 
+      visible={isLoading}
+      textContent={'Loading...'} 
+      textStyle={styles.loadingSpinner}
+    />
     </SafeAreaView>
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-data: state.products.data,
-loading: state.products.loading,
-hasMore: state.products.hasMore,
-totalCount: state.products.totalCount
-})
-
-const mapDispatchToProps = {
-//  search,
-//  fetchProducts,
- fetchProduct,
-}
-export default connect(mapStateToProps, mapDispatchToProps)(ProductsList)
+export default ProductsList;

@@ -1,29 +1,22 @@
-import React, { useEffect } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import ProductsList from './products/ProductsList';
+import ProductPage from './products/ProductPage'
+
+const Stack = createStackNavigator();
 
 const App = () => {
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('http://localhost:3000/api/products/');
-      const body = await res.json();
-      console.log(body);
-    }
-    console.log('res');
-    fetchData();
-  }, []);
-
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ProductsList />
-      </SafeAreaView>
-    </>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="ProductsList" screenOptions={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }}>
+        <Stack.Screen name="ProductsList" component={ProductsList} options={{ title: 'Grocery Store' }}/>
+        <Stack.Screen name="ProductPage" component={ProductPage} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
-
 
 const styles = StyleSheet.create({
   
