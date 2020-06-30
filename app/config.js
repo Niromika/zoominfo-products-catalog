@@ -1,1 +1,1 @@
-export const BASE_API = 'http://192.168.1.13:3000';
+export const BASE_API = 'http://<YOUR IP ADDRESS>:3000';

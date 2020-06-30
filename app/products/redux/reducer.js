@@ -7,6 +7,7 @@ const initialState = {
 };
 
 export const reducer = (state = initialState, action) => {
+  const { payload } = action;
   switch (action.type) {
     case actions.FETCH_PRODUCTS_START:
       return Object.assign({}, state, {
@@ -18,8 +19,12 @@ export const reducer = (state = initialState, action) => {
         data: []
       });
     case actions.SEARCH_PRODUCTS_SUCCESS:
+      return Object.assign({}, state, {
+        loading: false,
+        hasMore: payload.hasMore,
+        data: payload.data
+      });
     case actions.FETCH_PRODUCTS_SUCCESS: 
-      const {payload} = action;
       debugger;
       return Object.assign({}, state, {
         loading: false,
