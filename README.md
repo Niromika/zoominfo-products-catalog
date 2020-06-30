@@ -8,7 +8,7 @@
 
 ## Quick Start
 
-1. open a terminal and run the command `ipconfig`. then you will get a list of details. then you need to copy your **ip address** and paste it in **app/config.js** file in the variable named **BASE_API** instead of the string **<YOUR IP ADDRESS>**. press save. this will allow your app to communicate with the server at localhost.
+1. open a terminal and run the command `ipconfig`. then you will get a list of details. then you need to copy your **ip address** and paste it in **app/config.js** file in the variable named **BASE_API** instead of the string **<YOUR_IP_ADDRESS>**. press save. this will allow your app to communicate with the server at localhost.
 
 2. open your emulator/simulator.
 
